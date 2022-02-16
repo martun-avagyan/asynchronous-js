@@ -64,7 +64,16 @@ console.log(request);
 const getCountryData = function (country) {
   fetch(`https://restcountries.com/v2/name/${country}`)
     .then((response) => response.json())
-    .then((data) => renderCountry(data[0]));
+    .then((data) => {
+      renderCountry(data[0]);
+      const [neighbor] = data[0].borders;
+      if (!neighbor) return;
+      return fetch(`https://restcountries.com/v2/alpha/${neighbor}`);
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      renderCountry(data, "neighbor");
+    });
 };
 
 getCountryData("usa");
